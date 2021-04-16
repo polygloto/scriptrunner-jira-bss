@@ -6,6 +6,7 @@ import com.atlassian.jira.event.type.EventDispatchOption
 import com.atlassian.jira.issue.Issue
 import com.atlassian.jira.issue.IssueInputParametersImpl
 import com.atlassian.jira.issue.label.Label
+import com.atlassian.jira.user.ApplicationUser
 import com.onresolve.scriptrunner.db.DatabaseUtil
 
 def issue = event.issue as Issue
@@ -65,8 +66,7 @@ IssueService.UpdateValidationResult updateValidationResult = issueService.valida
 issueService.update(user, updateValidationResult, EventDispatchOption.DO_NOT_DISPATCH, false)
 
 // set assignee
-//TODO Validation ERROR
-def componentLead = component.getComponentLead()
-def validateAssignResult = issueService.validateAssign(componentLead, issue.id, issue.reporterId)
+ApplicationUser componentLead = component.getComponentLead()
+def validateAssignResult = issueService.validateAssign(componentLead, issue.id, componentLead.username)
 issueService.assign(componentLead, validateAssignResult)
-log.warn('Installed assignee ${componentLead.toString()}')
+log.warn('Set assignee {$componentLead.username}')
